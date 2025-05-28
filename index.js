@@ -21,7 +21,7 @@ app.get('/', function (req, res) {
 });
 
 
-app.post('/api/upload', upload.single('file'), (req, res) => {
+app.post('/api/fileanalyse', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
