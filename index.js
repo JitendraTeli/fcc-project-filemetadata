@@ -3,6 +3,8 @@ var cors = require('cors');
 require('dotenv').config()
 const multer = require('multer');
 const bodyParser = require('body-parser');
+const path = require('path');
+
 var app = express();
 
 
@@ -21,18 +23,32 @@ app.get('/', function (req, res) {
 });
 
 
-app.post('/api/fileanalyse', upload.single('file'), (req, res) => {
+app.post('/api/fileanalyse', upload.single('upfile'), (req, res) => {
+  
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
 
+  console.log(req.file);
   const { originalname, mimetype, size } = req.file;
 
   res.status(200).json({
-    fileName: originalname,
-    fileType: mimetype,
-    fileSize: size, // Size in bytes
+    name: originalname,
+    type: mimetype,
+    size: size, // Size in bytes
   });
+});
+
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    // Multer-specific errors
+    return res.status(400).json({ error: err.message });
+  }
+  if (err) {
+    // Other errors
+    return res.status(500).json({ error: err.message || 'Server error' });
+  }
+  next();
 });
 
 
